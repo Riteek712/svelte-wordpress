@@ -1,3 +1,10 @@
+<script>
+  import Hero from "$lib/components/Hero.svelte";
+import ProblemAdvantages from "$lib/components/ProblemAdvantages.svelte";
+  import Testimonials from "$lib/components/Testimonials.svelte";
 
-<h1 class="mt-20 text-3xl">Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+</script>
+
+<Hero/>
+<ProblemAdvantages />
+<Testimonials />
