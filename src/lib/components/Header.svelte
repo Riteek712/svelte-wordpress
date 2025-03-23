@@ -35,7 +35,7 @@
         <a href="/">Home</a>
         <a href="/features">Features</a>
         <a href="/for-whom">For Whom</a>
-        <a href="/blog">Blog</a>
+        <a href="/blogs">Blog</a>
         <a href="/about">About</a>
         <span class="cursor-pointer">🌐</span>
       </nav>
