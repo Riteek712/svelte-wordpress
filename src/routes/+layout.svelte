@@ -5,9 +5,11 @@
 	let { children } = $props();
 </script>
 
+<div class="flex flex-col min-h-screen">
 <Header />
-<main>
+<main class="flex-grow">
 	{@render children()}
 </main>
 
 <Footer />
+</div>
