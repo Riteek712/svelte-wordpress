@@ -64,7 +64,7 @@
         date: "February 20, 2024",
         title: "Why Construction Project Delays Happen and How to Solve Them with Automation",
         excerpt: "Delays in construction projects aren’t just frustrating—they’re expensive...",
-        image: "/blogs.jpg",
+        image: "/hero.jpg",
         href: "/blog/why-construction-project-delays-happen",
       },
     ];
@@ -92,7 +92,7 @@
   </script>
   
   <div class="h-[50vh] w-full flex items-center justify-center text-center flex-col">
-    <h1 class="text-4xl font-bold text-gray-900 text-center mb-4">Blog</h1>
+    <h1 class="text-4xl pt-12 font-bold text-gray-900 text-center mb-4">Blog</h1>
   <p class="text-lg text-gray-600 text-center mb-12">
     Discover the latest insights on project management, automation, and efficiency improvements.
   </p>
