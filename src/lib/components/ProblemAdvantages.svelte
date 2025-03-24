@@ -5,22 +5,22 @@
       {
         stat: "42%",
         description: "of EV infrastructure projects are delayed by an average of 8-10",
-        image: "https://unsplash.com/photos/a-row-of-doors-with-windows-39-xDe6dyFo", // Replace with actual image URL
+        image: "/problems/problem1.jpg", // Replace with actual image URL
       },
       {
         stat: "42%",
         description: "of EV infrastructure projects are delayed by an average of 8-10",
-        image: "https://unsplash.com/photos/a-row-of-doors-with-windows-39-xDe6dyFo", // Replace with actual image URL
+        image: "/problems/problem2.jpg", // Replace with actual image URL
       },
       {
         stat: "42%",
         description: "of EV infrastructure projects are delayed by an average of 8-10",
-        image: "https://unsplash.com/photos/a-row-of-doors-with-windows-39-xDe6dyFo", // Replace with actual image URL
+        image:"/problems/problem1.jpg", // Replace with actual image URL
       },
       {
         stat: "42%",
         description: "of EV infrastructure projects are delayed by an average of 8-10",
-        image: "https://unsplash.com/photos/a-row-of-doors-with-windows-39-xDe6dyFo", // Replace with actual image URL
+        image: "/problems/problem2.jpg", // Replace with actual image URL
       },
     ];
   
@@ -40,6 +40,7 @@
       "Feature 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
       "Feature 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit",
       "Feature 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
+      "Feature 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit",
     ];
   </script>
   
