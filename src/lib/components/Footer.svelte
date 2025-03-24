@@ -45,9 +45,9 @@
         <h3 class="font-semibold">About us</h3>
         <ul class="text-sm text-gray-600 space-y-1">
           <li><a href="/" class="hover:underline">Home</a></li>
-          <li><a href="/features" class="hover:underline">Features</a></li>
-          <li><a href="/studies" class="hover:underline">Studies</a></li>
-          <li><a href="/about" class="hover:underline">About us</a></li>
+          <li><a href="/" class="hover:underline">Features</a></li>
+          <li><a href="/" class="hover:underline">Studies</a></li>
+          <li><a href="/" class="hover:underline">About us</a></li>
           <li><a href="/contact" class="hover:underline">Contact details</a></li>
         </ul>
       </div>
@@ -70,9 +70,9 @@
           </a>
         </div>
         <ul class="text-sm text-gray-600 space-y-1 mt-3">
-          <li><a href="/privacy" class="hover:underline">Privacy Policy</a></li>
-          <li><a href="/terms" class="hover:underline">Terms and Conditions</a></li>
-          <li><a href="/impressum" class="hover:underline">Impressum</a></li>
+          <li><a href="/" class="hover:underline">Privacy Policy</a></li>
+          <li><a href="/" class="hover:underline">Terms and Conditions</a></li>
+          <li><a href="/" class="hover:underline">Impressum</a></li>
         </ul>
       </div>
     </div>

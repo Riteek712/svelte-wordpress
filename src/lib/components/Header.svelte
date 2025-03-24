@@ -33,10 +33,10 @@
       
       <nav class="hidden md:flex space-x-6 text-gray-800">
         <a href="/">Home</a>
-        <a href="/features">Features</a>
-        <a href="/for-whom">For Whom</a>
+        <a href="/">Features</a>
+        <a href="/">For Whom</a>
         <a href="/blogs">Blog</a>
-        <a href="/about">About</a>
+        <a href="/">About</a>
         <span class="cursor-pointer">🌐</span>
       </nav>
       
