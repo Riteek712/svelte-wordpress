@@ -1,4 +1,28 @@
-<script>
+<script lang="ts">
+  interface ProblemContent {
+      sectionTitle?: string;
+      problems?: Array<{
+          percentage?: string;
+          description?: string;
+          image?: string;
+      }>;
+  }
+
+  interface AdvantagesContent {
+      sectionTitle?: string;
+      beforeState?: {
+          title?: string;
+          items?: string[];
+      };
+      afterState?: {
+          title?: string;
+          items?: string[];
+      };
+  }
+
+  export let problemContent: ProblemContent ;
+  export let advantagesContent: AdvantagesContent; 
+
   const problems = [
     { stat: "42%", description: "of EV infrastructure projects are delayed by an average of 8-10", image: "/problems/problem1.jpg" },
     { stat: "42%", description: "of EV infrastructure projects are delayed by an average of 8-10", image: "/problems/problem2.jpg" },
@@ -6,23 +30,7 @@
     { stat: "42%", description: "of EV infrastructure projects are delayed by an average of 8-10", image: "/problems/problem2.jpg" },
   ];
 
-  const beforeItems = [
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
-    "Rising costs and pressure on resources",
-  ];
 
-  const afterItems = [
-    "Feature 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
-    "Feature 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-    "Feature 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
-    "Feature 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-    "Feature 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
-    "Feature 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-  ];
 </script>
 
 <div class="bg-gray-100 min-h-screen py-12">
@@ -52,7 +60,7 @@
         <div class="bg-white rounded-lg shadow-lg shadow-red-500/50 p-6 relative">
           <h2 class="text-2xl font-semibold text-center mb-6">Before</h2>
           <ul class="space-y-4">
-            {#each beforeItems as item}
+              {#each advantagesContent.beforeState?.items || [] as item}
               <li class="flex items-start">
                 <span class="text-red-500 mr-2">●</span>
                 <span class="text-gray-600">{item}</span>
@@ -65,7 +73,7 @@
         <div class="bg-white rounded-lg shadow-lg shadow-lime-500/50 p-6 relative">
           <h2 class="text-2xl font-semibold text-center mb-6">After</h2>
           <ul class="space-y-4">
-            {#each afterItems as item}
+              {#each advantagesContent.afterState?.items || [] as item}
               <li class="flex items-start">
                 <span class="text-lime-500 mr-2">●</span>
                 <span class="text-gray-600">{item}</span>

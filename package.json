@@ -28,6 +28,7 @@
 		"@urql/svelte": "^4.2.3",
 		"graphql": "^16.10.0",
 		"jsdom": "^26.0.0",
-		"lucide-svelte": "^0.483.0"
+		"lucide-svelte": "^0.483.0",
+		"node-html-parser": "^7.0.1"
 	}
 }
