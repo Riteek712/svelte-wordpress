@@ -1,5 +1,6 @@
 import type { PageLoad } from './$types';
 import { parse, HTMLElement } from 'node-html-parser';
+export const prerender = true;
 export const load: PageLoad = async ({ fetch }) => {
     try {
       const response = await fetch( import.meta.env.VITE_PUBLIC_WORDPRESS_API_URL, {
@@ -23,6 +24,7 @@ export const load: PageLoad = async ({ fetch }) => {
   
       const contentHTML = data.page.content;
       const sections = extractSectionsFromHTML(contentHTML);
+      console.log(sections)
   
       return {
         wordpressContent: sections
@@ -65,18 +67,48 @@ export const load: PageLoad = async ({ fetch }) => {
   }
   
   function extractProblemSection(root: HTMLElement) {
-    const problemColumns = root.querySelectorAll('.wp-block-columns .wp-block-column');
-    if (problemColumns.length === 0) return {};
-  
+    // Find the specific section with the "The Problem We Solve" header
+    const problemSectionHeader = Array.from(root.querySelectorAll('h2'))
+        .find(header => header.textContent?.trim() === 'The Problem We Solve');
+    
+    // If no header found, return empty object
+    if (!problemSectionHeader) return { sectionTitle: '', problems: [] };
+
+    // Find the columns section right after the header
+    const problemColumns = problemSectionHeader.closest('.wp-block-group')
+        ?.nextElementSibling?.querySelectorAll('.wp-block-column');
+
+    // If no columns found, return empty object
+    if (!problemColumns || problemColumns.length === 0) return { sectionTitle: 'The Problem We Solve', problems: [] };
+
+    // Use a Set to track unique entries
+    const uniqueProblems = new Set();
+
+    // Filter and map only the relevant problem columns
+    const problems = Array.from(problemColumns)
+        .map(column => {
+            const stat = column.querySelector('h2')?.textContent?.trim() || '';
+            const description = column.querySelector('p')?.textContent?.trim() || '';
+            const image = column.querySelector('figure.wp-block-image img')?.getAttribute('src') || '';
+            
+            // Create a unique key for the entry
+            const uniqueKey = `${stat}-${description}-${image}`;
+            
+            // Only return non-empty entries that haven't been seen before
+            if ((stat || description || image) && !uniqueProblems.has(uniqueKey)) {
+                uniqueProblems.add(uniqueKey);
+                return { stat, description, image };
+            }
+            
+            return null;
+        })
+        .filter(problem => problem !== null);
+
     return {
-      sectionTitle: root.querySelector('h2:contains("The Problem We Solve")')?.textContent.trim() || '',
-      problems: problemColumns.map(column => ({
-        percentage: column.querySelector('h2')?.textContent.trim() || '',
-        description: column.querySelector('p')?.textContent.trim() || '',
-        image: column.querySelector('figure.wp-block-image img')?.getAttribute('src') || ''
-      }))
+        sectionTitle: 'The Problem We Solve',
+        problems
     };
-  }
+}
   
   function extractAdvantagesSection(root: HTMLElement) {
     const advantagesTitle = root.querySelector('p:contains("Advantages")')?.textContent.trim() || '';

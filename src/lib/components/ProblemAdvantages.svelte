@@ -1,12 +1,12 @@
 <script lang="ts">
   interface ProblemContent {
-      sectionTitle?: string;
-      problems?: Array<{
-          percentage?: string;
-          description?: string;
-          image?: string;
-      }>;
-  }
+    sectionTitle?: string;
+    problems?: Array<{
+        stat?: string;
+        description?: string;
+        image?: string;
+    }>;
+}
 
   interface AdvantagesContent {
       sectionTitle?: string;
@@ -21,14 +21,10 @@
   }
 
   export let problemContent: ProblemContent ;
+  console.log(problemContent)
   export let advantagesContent: AdvantagesContent; 
 
-  const problems = [
-    { stat: "42%", description: "of EV infrastructure projects are delayed by an average of 8-10", image: "/problems/problem1.jpg" },
-    { stat: "42%", description: "of EV infrastructure projects are delayed by an average of 8-10", image: "/problems/problem2.jpg" },
-    { stat: "42%", description: "of EV infrastructure projects are delayed by an average of 8-10", image: "/problems/problem1.jpg" },
-    { stat: "42%", description: "of EV infrastructure projects are delayed by an average of 8-10", image: "/problems/problem2.jpg" },
-  ];
+  const problems = problemContent.problems
 
 
 </script>
@@ -38,7 +34,7 @@
   <section class="max-w-7xl mx-auto px-4 mb-16">
     <h1 class="text-4xl font-bold text-center mb-10">The Problem We Solve</h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-      {#each problems as problem}
+      {#each problems || [] as problem}
         <div class="bg-white rounded-lg shadow-xl p-6 text-left">
           <h2 class="text-4xl font-bold text-green-500 mb-2">{problem.stat}</h2>
           <p class="text-gray-600 mb-4">{problem.description}</p>
