@@ -21,7 +21,6 @@
   }
 
   export let problemContent: ProblemContent ;
-  console.log(problemContent)
   export let advantagesContent: AdvantagesContent; 
 
   const problems = problemContent.problems

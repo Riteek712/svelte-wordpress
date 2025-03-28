@@ -1,5 +1,10 @@
 <script lang="ts">
+  import {page} from '$app/stores'
     import ContactPage from '$lib/components/ContactPage.svelte';
+  import type { ContactFormField } from './proxy+page';
+
+  const formFields = $page.data.formFields;
+
   </script>
   
   <section class="mt-2.5 h-[50vh] bg-[url('https://images.unsplash.com/photo-1593642634443-44adaa06623a')] bg-cover bg-center relative flex flex-col items-center justify-center text-center px-4">
@@ -13,7 +18,7 @@
     </div>
   </section>
   
-  <ContactPage />
+  <ContactPage content={formFields}/>
   <section class="mt-2.5 h-[30vh] flex flex-col items-center justify-center" >
 	<h2 class="text-4xl font-semibold mb-4">Not sure where to start? Schedule a free consultantion today.</h2>
     <br/>

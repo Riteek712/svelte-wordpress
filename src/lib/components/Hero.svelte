@@ -6,7 +6,6 @@
       heroImage?: string;
   }
   export let content: HeroContent;
-  console.log(content)
 </script>
 
 <section class="relative min-h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('/mountain.jpg');">

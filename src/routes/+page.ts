@@ -24,7 +24,6 @@ export const load: PageLoad = async ({ fetch }) => {
   
       const contentHTML = data.page.content;
       const sections = extractSectionsFromHTML(contentHTML);
-      console.log(sections)
   
       return {
         wordpressContent: sections

@@ -33,11 +33,7 @@ export const load: PageLoad = async ({ params }) => {
     };
   }
 
-  console.log('Fetching post with ID:', id);
   const result = await client.query(query, { id }).toPromise();
-
-  // Log the full result for debugging
-  // console.log('API Response:', JSON.stringify(result, null, 2));
 
   if (result.error || !result.data?.post) {
     const errorMessage = result.error?.message || 'Post not found';
