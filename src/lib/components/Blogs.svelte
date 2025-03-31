@@ -3,18 +3,31 @@
   import { gql } from '@urql/svelte';
   import { queryStore } from '@urql/svelte';
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
 
   // Define types for the GraphQL response
-  interface AuthorNode {
-    node: { id: string };
+  interface Language {
+    slug: string;
+  }
+
+  interface Translation {
+    language: {
+      name: string;
+      slug: string;
+    };
+    id: string;
+    slug: string;
+    title: string;
   }
 
   interface PostNode {
     id: string;
     content: string;
     date: string;
-    author: AuthorNode;
+    language: Language;
     slug: string;
+    title: string;
+    translations: Translation[];
   }
 
   interface PostEdge {
@@ -43,12 +56,20 @@
             id
             content
             date
-            author {
-              node {
-                id
-              }
+            language {
+              slug
             }
             slug
+            title
+            translations {
+              language {
+                name
+                slug
+              }
+              id
+              slug
+              title
+            }
           }
         }
       }
@@ -56,6 +77,33 @@
   `;
 
   const posts = queryStore<PostsData>({ client, query: postsQuery });
+
+  // Get the current language from URL parameters
+  $: currentLang = $page.url.searchParams.get('lang') || 'en';
+
+  // Filter posts based on the current language
+  $: filteredPosts = $posts.data?.posts.edges
+    .filter(({ node }: PostEdge) => node.language.slug === currentLang)
+    .map(({ node }: PostEdge) => {
+      // Extract an excerpt from the content
+      const excerptMatch = node.content.match(/<p>(.*?)(?:<\/p>|$)/);
+      const excerpt = excerptMatch ? excerptMatch[1].slice(0, 100) + '...' : 'No excerpt available';
+      
+      // Extract the first image from the content or use default
+      const image = node.content.match(/<img[^>]+src=["'](.*?)["']/)?.[1] || '/dummy-post-horisontal.jpg';
+
+      return {
+        date: new Date(node.date).toLocaleDateString(currentLang === 'de' ? 'de-DE' : 'en-US', { 
+          month: 'long', 
+          day: 'numeric', 
+          year: 'numeric' 
+        }),
+        title: node.title || slugToSentenceCase(node.slug),
+        excerpt,
+        image,
+        href: `/blogs/${node.id}?lang=${currentLang}` // Include language in the URL
+      };
+    }) || [];
 
   function slugToSentenceCase(slug: string): string {
     return slug
@@ -68,25 +116,10 @@
       .join(' ');
   }
 
-  $: blogPosts = $posts.data?.posts.edges.map(({ node }: PostEdge) => {
-    const title = slugToSentenceCase(node.slug);
-    const excerptMatch = node.content.match(/<p>(.*?)(?:<\/p>|$)/);
-    const excerpt = excerptMatch ? excerptMatch[1].slice(0, 100) + '...' : 'No excerpt available';
-    const image = node.content.match(/<img[^>]+src=["'](.*?)["']/)?.[1] || '/default-blog-image.jpg';
-
-    return {
-      date: new Date(node.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-      title,
-      excerpt,
-      image,
-      href: `/blogs/${node.id}` // Use id as the slug in the URL
-    };
-  }) || [];
-
   let currentPage: number = 1;
   const postsPerPage = 6;
-  $: totalPages = Math.ceil(blogPosts.length / postsPerPage);
-  $: paginatedPosts = blogPosts.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage);
+  $: totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+  $: paginatedPosts = filteredPosts.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage);
 
   function goToPrevious(): void {
     if (currentPage > 1) currentPage -= 1;
@@ -100,25 +133,49 @@
     currentPage = page;
   }
 
-  // Navigate to the post page using goto
+  // Navigate to the post page using goto and preserve the language parameter
   function navigateToPost(href: string): void {
     goto(href);
   }
+
+  // Get translations for the blogs page
+  $: blogsPageText = {
+    en: {
+      heading: 'Blog',
+      description: 'Discover the latest insights on project management, automation, and efficiency improvements.',
+      loading: 'Loading posts...',
+      error: 'Error:',
+      readMore: 'Read more',
+      previous: 'Previous',
+      next: 'Next'
+    },
+    de: {
+      heading: 'Blog',
+      description: 'Entdecken Sie die neuesten Erkenntnisse zu Projektmanagement, Automatisierung und Effizienzverbesserungen.',
+      loading: 'Beiträge werden geladen...',
+      error: 'Fehler:',
+      readMore: 'Weiterlesen',
+      previous: 'Zurück',
+      next: 'Weiter'
+    }
+  }[currentLang];
 </script>
 
 <div class="h-[50vh] w-full flex items-center justify-center text-center flex-col bg-gray-50">
-  <h1 class="text-4xl pt-12 font-bold text-gray-900 mb-4">Blog</h1>
+  <h1 class="text-4xl pt-12 font-bold text-gray-900 mb-4">{blogsPageText?.heading}</h1>
   <p class="text-lg text-gray-600 mb-12 max-w-2xl">
-    Discover the latest insights on project management, automation, and efficiency improvements.
+    {blogsPageText?.description}
   </p>
 </div>
 
 <section class="bg-gray-100 py-16">
   <div class="max-w-7xl mx-auto px-4">
     {#if $posts.fetching}
-      <p class="text-center text-gray-600">Loading posts...</p>
+      <p class="text-center text-gray-600">{blogsPageText?.loading}</p>
     {:else if $posts.error}
-      <p class="text-center text-red-500">Error: {$posts.error.message}</p>
+      <p class="text-center text-red-500">{blogsPageText?.error} {$posts.error.message}</p>
+    {:else if filteredPosts.length === 0}
+      <p class="text-center text-gray-600">No posts available in {currentLang === 'de' ? 'German' : 'English'}.</p>
     {:else}
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {#each paginatedPosts as post}
@@ -128,7 +185,7 @@
             <h2 class="text-xl font-semibold text-gray-900 mb-2">{post.title}</h2>
             <p class="text-gray-600 mb-4">{post.excerpt}</p>
             <button on:click={() => navigateToPost(post.href)} class="text-green-500 hover:text-green-600 flex items-center">
-              Read more
+              {blogsPageText?.readMore}
               <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
@@ -143,9 +200,9 @@
             on:click={goToPrevious}
             class="px-4 py-2 text-gray-600 hover:text-gray-900 disabled:text-gray-300"
             disabled={currentPage === 1}
-            aria-label="Previous page"
+            aria-label={blogsPageText?.previous}
           >
-            Previous
+            {blogsPageText?.previous}
           </button>
 
           {#each Array(totalPages).fill(0) as _, index}
@@ -175,9 +232,9 @@
             on:click={goToNext}
             class="px-4 py-2 text-gray-600 hover:text-gray-900 disabled:text-gray-300"
             disabled={currentPage === totalPages}
-            aria-label="Next page"
+            aria-label={blogsPageText?.next}
           >
-            Next
+            {blogsPageText?.next}
           </button>
         </div>
       {/if}
