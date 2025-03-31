@@ -11,7 +11,7 @@ This project is a SvelteKit application built with Svelte 5, integrating with a 
 - **SvelteKit Application**: Built using Svelte 5.
 - **Backend Integration**: Integrated with WordPress via GraphQL using WPGraphQL.
 - **Git Repository**: Includes a clear commit history (available in this repository).
-- **Bonus (Multi-language Support)**: Not implemented in this submission.
+- **Bonus (Multi-language Support)**: Implemented for blogs
 
 ## Design & Pages
 The application is based on the Figma design provided at:  
