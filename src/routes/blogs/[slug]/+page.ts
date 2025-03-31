@@ -8,32 +8,50 @@ export const prerender = false;
 export const ssr = true;
 
 const query = gql`
-  query NewQuery($id: ID!) {
+  query NewQuery($id: ID!, $languageCode: LanguageCodeEnum!) {
     post(id: $id, idType: ID) {
       slug
       content
+      title
       author {
         node {
           id
         }
       }
       date
+      language {
+        name
+        slug
+      }
+      translation(language: $languageCode) {
+        id
+        slug
+        title
+      }
     }
   }
 `;
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, url }) => {
   const id = params.slug; // Use the URL path segment as the id
+  const currentLang = url.searchParams.get('lang') || 'en';
+
+  // Ensure languageCode is always a valid value
+  const languageCode: 'EN' | 'DE' = currentLang === 'en' ? 'DE' : 'EN';
+
   if (!id) {
     console.error('No ID provided in URL');
     return {
       status: 404,
       error: 'Post ID not provided in URL',
-      post: null
+      post: null,
+      currentLang
     };
   }
 
-  const result = await client.query(query, { id }).toPromise();
+  const variables = { id, languageCode };
+
+  const result = await client.query(query, variables).toPromise();
 
   if (result.error || !result.data?.post) {
     const errorMessage = result.error?.message || 'Post not found';
@@ -41,11 +59,13 @@ export const load: PageLoad = async ({ params }) => {
     return {
       status: 404,
       error: errorMessage,
-      post: null
+      post: null,
+      currentLang
     };
   }
 
   return {
-    post: result.data.post
+    post: result.data.post,
+    currentLang
   };
 };

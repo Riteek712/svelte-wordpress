@@ -1,53 +1,66 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { browser } from "$app/environment";
-  import { goto } from "$app/navigation";
-  import { writable } from "svelte/store";
+import { browser } from "$app/environment";
+import { goto } from "$app/navigation";
+import { writable } from "svelte/store";
+  import { page } from "$app/stores";
 
-  export let selectedLanguage = writable("en"); // Default to English
-  let isScrolled: boolean = false;
-  let showLanguageDropdown: boolean = false;
+export let selectedLanguage = writable("en"); // Default to English
+let isScrolled: boolean = false;
+let showLanguageDropdown: boolean = false;
+let isSingleBlogView: boolean = false; // Flag to check if viewing a single blog
 
-  function handleScroll() {
-    isScrolled = window.scrollY > 50;
+function handleScroll() {
+  isScrolled = window.scrollY > 50;
+}
+
+function toggleDropdown() {
+  showLanguageDropdown = !showLanguageDropdown;
+}
+
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    toggleDropdown();
   }
+}
 
-  function toggleDropdown() {
-    showLanguageDropdown = !showLanguageDropdown;
+function selectLanguage(lang: "en" | "de") {
+  $selectedLanguage = lang;
+  showLanguageDropdown = false;
+
+  if (browser && window.location.pathname === "/blogs") {
+    goto(`/blogs?lang=${lang}`, { replaceState: true });
   }
+}
 
-  function handleKeydown(event: KeyboardEvent) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      toggleDropdown();
+$: {
+  const pathSegments = $page.url.pathname.split("/").filter(Boolean);
+  isSingleBlogView = pathSegments.length === 2 && pathSegments[0] === "blogs"; 
+}
+
+onMount(() => {
+  if (browser) {
+    window.addEventListener("scroll", handleScroll);
+
+    const urlLang = new URLSearchParams(window.location.search).get("lang");
+    if (urlLang === "en" || urlLang === "de") {
+      $selectedLanguage = urlLang;
     }
+
+    // Detect single blog view
+    const pathSegments = window.location.pathname.split("/").filter(Boolean);
+    console.log(pathSegments)
+    isSingleBlogView = pathSegments.length === 2 && pathSegments[0] === "blogs"; 
   }
+});
 
-  function selectLanguage(lang: "en" | "de") {
-    $selectedLanguage = lang;
-    showLanguageDropdown = false;
-
-    if (browser && window.location.pathname === "/blogs") {
-      goto(`/blogs?lang=${lang}`, { replaceState: true });
-    }
+onDestroy(() => {
+  if (browser) {
+    window.removeEventListener("scroll", handleScroll);
   }
+});
 
-  onMount(() => {
-    if (browser) {
-      window.addEventListener("scroll", handleScroll);
-
-      const urlLang = new URLSearchParams(window.location.search).get("lang");
-      if (urlLang === "en" || urlLang === "de") {
-        $selectedLanguage = urlLang;
-      }
-    }
-  });
-
-  onDestroy(() => {
-    if (browser) {
-      window.removeEventListener("scroll", handleScroll);
-    }
-  });
 </script>
 
 <div class="fixed top-0 left-0 w-full z-100">
@@ -69,37 +82,40 @@
       <a href="/">For Whom</a>
       <a href="/blogs">Blog</a>
       <a href="/">About</a>
-      <div class="relative">
+      {#if !isSingleBlogView}
+  <div class="relative">
+    <button
+      type="button"
+      class="cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center space-x-1"
+      aria-label="Toggle language selection"
+      aria-expanded={showLanguageDropdown}
+      on:click={toggleDropdown}
+      on:keydown={handleKeydown}
+    >
+      <span>🌐</span>
+      <span class="text-sm font-semibold">{$selectedLanguage}</span>
+    </button>
+    {#if showLanguageDropdown}
+      <div class="absolute top-8 left-0 bg-white shadow-md rounded p-2">
         <button
           type="button"
-          class="cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center space-x-1"
-          aria-label="Toggle language selection"
-          aria-expanded={showLanguageDropdown}
-          on:click={toggleDropdown}
-          on:keydown={handleKeydown}
+          class="block w-full text-left hover:bg-gray-100 p-1 focus:outline-none focus:bg-gray-100 {$selectedLanguage === 'en' ? 'bg-gray-200 font-bold' : ''}"
+          on:click={() => selectLanguage("en")}
         >
-          <span>🌐</span>
-          <span class="text-sm font-semibold">{$selectedLanguage}</span>
+          English
         </button>
-        {#if showLanguageDropdown}
-          <div class="absolute top-8 left-0 bg-white shadow-md rounded p-2">
-            <button
-              type="button"
-              class="block w-full text-left hover:bg-gray-100 p-1 focus:outline-none focus:bg-gray-100 {$selectedLanguage === 'en' ? 'bg-gray-200 font-bold' : ''}"
-              on:click={() => selectLanguage("en")}
-            >
-              English
-            </button>
-            <button
-              type="button"
-              class="block w-full text-left hover:bg-gray-100 p-1 focus:outline-none focus:bg-gray-100 {$selectedLanguage === 'de' ? 'bg-gray-200 font-bold' : ''}"
-              on:click={() => selectLanguage("de")}
-            >
-              German
-            </button>
-          </div>
-        {/if}
+        <button
+          type="button"
+          class="block w-full text-left hover:bg-gray-100 p-1 focus:outline-none focus:bg-gray-100 {$selectedLanguage === 'de' ? 'bg-gray-200 font-bold' : ''}"
+          on:click={() => selectLanguage("de")}
+        >
+          German
+        </button>
       </div>
+    {/if}
+  </div>
+{/if}
+
     </nav>
 
     <div class="flex space-x-2">
